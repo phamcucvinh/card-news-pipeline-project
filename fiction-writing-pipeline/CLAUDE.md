@@ -20,6 +20,7 @@
 | Novel | 장편소설 | `pipelines/pipeline-novel.md` | 5회 |
 | Short | 단편소설 | `pipelines/pipeline-short.md` | 3회 |
 | Chapter | 단일 챕터 | `pipelines/pipeline-chapter.md` | 2회 |
+| Poem | 시 쓰기 | `pipelines/pipeline-poem.md` | 2회 |
 
 ## 시작 방법
 
@@ -29,6 +30,7 @@
 "Novel — [아이디어]로 장편소설 써줘"
 "Short — [아이디어]로 단편소설 써줘"
 "Chapter — [설정 + 이번 챕터 목표]로 챕터 써줘"
+"Poem — [시상/감정/장면]으로 시 써줘"
 ```
 
 ## 컨펌 요청 형식
@@ -72,9 +74,9 @@ fiction-writing-pipeline/
 ├── CLAUDE.md          ← 지금 이 파일 (오케스트레이터)
 ├── PRD.md             ← 전체 시스템 요구사항
 ├── feedback.md        ← 작가 취향 누적 저장소
-├── agents/            ← 전문 에이전트 정의 (5개)
-├── skills/            ← Executor 스킬 정의 (9개)
-├── pipelines/         ← 유형별 실행 순서 (3개)
+├── agents/            ← 전문 에이전트 정의 (6개)
+├── skills/            ← Executor 스킬 정의 (11개)
+├── pipelines/         ← 유형별 실행 순서 (4개)
 ├── templates/         ← 시트/구조 템플릿 (3개)
 └── output/            ← 모든 산출물 저장
     ├── concepts/      ← 로그라인, 컨셉 문서
