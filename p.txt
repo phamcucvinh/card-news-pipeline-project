@@ -1,0 +1,20 @@
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  실행 패턴 요약
+
+  SNS 전략 ──────► content-marketer  ┐ 병렬
+                   research-coord    ┘
+                        │
+                   social-media-copy ► 완성
+
+  분석+문서 ─────► business-analyst
+                        │
+                   technical-writer  ► 완성
+
+  리포트 ────────► research-coord
+                        │
+                   report-generator  ► 완성
+
+  대규모 작업 ───► [위 중 2개+]
+                        │
+                   context-manager   ► 완성
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
