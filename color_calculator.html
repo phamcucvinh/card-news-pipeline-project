@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>칼라 계산기</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: '맑은 고딕', 'Malgun Gothic', sans-serif;
+    background: #1e1e2e; color: #cdd6f4;
+    display: flex; justify-content: center; align-items: center;
+    min-height: 100vh;
+  }
+  .app {
+    background: #2b2b3c; border-radius: 16px; padding: 32px;
+    width: 540px; box-shadow: 0 8px 32px rgba(0,0,0,.4);
+  }
+  h1 { text-align: center; font-size: 24px; color: #89b4fa; margin-bottom: 24px; }
+
+  /* 미리보기 */
+  .preview {
+    height: 120px; border-radius: 12px; display: flex;
+    align-items: center; justify-content: center;
+    font-family: 'Consolas', monospace; font-size: 28px; font-weight: bold;
+    border: 2px solid #444; margin-bottom: 16px; transition: background .15s;
+    cursor: pointer; position: relative;
+  }
+  .preview:hover::after {
+    content: '클릭하여 색상 선택'; position: absolute; bottom: 8px;
+    font-size: 12px; opacity: .6;
+  }
+
+  /* 입력 그룹 */
+  .group { margin-bottom: 14px; }
+  .group-label {
+    font-size: 13px; font-weight: bold; color: #a6adc8;
+    margin-bottom: 6px; display: block;
+  }
+  .row { display: flex; gap: 8px; align-items: center; }
+  .input-wrap {
+    display: flex; align-items: center; background: #1e1e2e;
+    border-radius: 8px; padding: 0 10px; flex: 1;
+    border: 1px solid #444; transition: border-color .2s;
+  }
+  .input-wrap:focus-within { border-color: #89b4fa; }
+  .input-wrap .prefix { color: #888; font-family: Consolas, monospace; font-size: 15px; margin-right: 4px; }
+  .input-wrap .suffix { color: #888; font-size: 12px; margin-left: 2px; }
+  .input-wrap input {
+    background: transparent; border: none; outline: none; color: #fff;
+    font-family: Consolas, monospace; font-size: 16px; padding: 10px 0;
+    width: 100%;
+  }
+  .input-wrap input[type=number] { -moz-appearance: textfield; }
+  .input-wrap input::-webkit-outer-spin-button,
+  .input-wrap input::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .color-label {
+    font-size: 13px; font-weight: bold; width: 18px; text-align: center;
+  }
+
+  /* 슬라이더 */
+  .sliders { margin: 20px 0; }
+  .slider-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .slider-row label { width: 16px; font-weight: bold; font-size: 14px; text-align: center; }
+  input[type=range] {
+    flex: 1; height: 6px; -webkit-appearance: none; appearance: none;
+    background: #444; border-radius: 3px; outline: none;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 18px; height: 18px;
+    border-radius: 50%; cursor: pointer; border: 2px solid #fff;
+  }
+  .slider-r::-webkit-slider-thumb { background: #f38ba8; }
+  .slider-g::-webkit-slider-thumb { background: #a6e3a1; }
+  .slider-b::-webkit-slider-thumb { background: #89b4fa; }
+  .slider-val { width: 36px; text-align: right; font-family: Consolas; font-size: 13px; color: #888; }
+
+  /* 버튼 */
+  .buttons { display: flex; gap: 8px; margin-top: 20px; }
+  .btn {
+    flex: 1; padding: 10px; border: none; border-radius: 8px;
+    font-family: inherit; font-size: 13px; font-weight: bold;
+    cursor: pointer; transition: all .2s; background: #3c3c52; color: #cdd6f4;
+  }
+  .btn:hover { background: #505068; transform: translateY(-1px); }
+  .btn:active { transform: translateY(0); }
+
+  /* 토스트 */
+  .toast {
+    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+    background: #89b4fa; color: #1e1e2e; padding: 10px 24px;
+    border-radius: 8px; font-size: 14px; font-weight: bold;
+    opacity: 0; transition: opacity .3s; pointer-events: none;
+  }
+  .toast.show { opacity: 1; }
+
+  /* 팔레트 */
+  .palette { margin-top: 20px; }
+  .palette-label { font-size: 13px; color: #a6adc8; margin-bottom: 8px; }
+  .palette-row { display: flex; gap: 4px; }
+  .palette-row .swatch {
+    flex: 1; height: 32px; border-radius: 6px; cursor: pointer;
+    border: 2px solid transparent; transition: all .2s;
+  }
+  .palette-row .swatch:hover { border-color: #fff; transform: scaleY(1.15); }
+
+  /* 숨겨진 컬러피커 */
+  #colorPicker { position: absolute; width: 0; height: 0; opacity: 0; pointer-events: none; }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <h1>🎨 칼라 계산기</h1>
+  <input type="color" id="colorPicker">
+
+  <!-- 미리보기 -->
+  <div class="preview" id="preview" onclick="document.getElementById('colorPicker').click()">
+    <span id="previewText">#3498DB</span>
+  </div>
+
+  <!-- HEX -->
+  <div class="group">
+    <span class="group-label">HEX</span>
+    <div class="row">
+      <div class="input-wrap">
+        <span class="prefix">#</span>
+        <input type="text" id="hex" maxlength="6" value="3498DB" oninput="fromHex()">
+      </div>
+    </div>
+  </div>
+
+  <!-- RGB -->
+  <div class="group">
+    <span class="group-label">RGB</span>
+    <div class="row">
+      <span class="color-label" style="color:#f38ba8">R</span>
+      <div class="input-wrap">
+        <input type="number" id="r" min="0" max="255" value="52" oninput="fromRgb()">
+      </div>
+      <span class="color-label" style="color:#a6e3a1">G</span>
+      <div class="input-wrap">
+        <input type="number" id="g" min="0" max="255" value="152" oninput="fromRgb()">
+      </div>
+      <span class="color-label" style="color:#89b4fa">B</span>
+      <div class="input-wrap">
+        <input type="number" id="b" min="0" max="255" value="219" oninput="fromRgb()">
+      </div>
+    </div>
+  </div>
+
+  <!-- HSL -->
+  <div class="group">
+    <span class="group-label">HSL</span>
+    <div class="row">
+      <span class="color-label">H</span>
+      <div class="input-wrap">
+        <input type="number" id="h" min="0" max="360" value="204" oninput="fromHsl()">
+        <span class="suffix">°</span>
+      </div>
+      <span class="color-label">S</span>
+      <div class="input-wrap">
+        <input type="number" id="s" min="0" max="100" value="70" oninput="fromHsl()">
+        <span class="suffix">%</span>
+      </div>
+      <span class="color-label">L</span>
+      <div class="input-wrap">
+        <input type="number" id="l" min="0" max="100" value="53" oninput="fromHsl()">
+        <span class="suffix">%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 슬라이더 -->
+  <div class="sliders">
+    <div class="slider-row">
+      <label style="color:#f38ba8">R</label>
+      <input type="range" class="slider-r" id="sr" min="0" max="255" value="52" oninput="fromSlider()">
+      <span class="slider-val" id="srv">52</span>
+    </div>
+    <div class="slider-row">
+      <label style="color:#a6e3a1">G</label>
+      <input type="range" class="slider-g" id="sg" min="0" max="255" value="152" oninput="fromSlider()">
+      <span class="slider-val" id="sgv">152</span>
+    </div>
+    <div class="slider-row">
+      <label style="color:#89b4fa">B</label>
+      <input type="range" class="slider-b" id="sb" min="0" max="255" value="219" oninput="fromSlider()">
+      <span class="slider-val" id="sbv">219</span>
+    </div>
+  </div>
+
+  <!-- 복사 버튼 -->
+  <div class="buttons">
+    <button class="btn" onclick="copy('hex')">📋 HEX 복사</button>
+    <button class="btn" onclick="copy('rgb')">📋 RGB 복사</button>
+    <button class="btn" onclick="copy('hsl')">📋 HSL 복사</button>
+  </div>
+
+  <!-- 보색/유사색 팔레트 -->
+  <div class="palette">
+    <span class="palette-label">관련 색상</span>
+    <div class="palette-row" id="paletteRow"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+// 컬러피커 연동
+$('colorPicker').addEventListener('input', e => {
+  $('hex').value = e.target.value.slice(1).toUpperCase();
+  fromHex();
+});
+
+function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+
+function rgbToHsl(r, g, b) {
+  r /= 255; g /= 255; b /= 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  let h, s, l = (max + min) / 2;
+  if (max === min) { h = s = 0; }
+  else {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+      case g: h = ((b - r) / d + 2) / 6; break;
+      case b: h = ((r - g) / d + 4) / 6; break;
+    }
+  }
+  return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100)];
+}
+
+function hslToRgb(h, s, l) {
+  h /= 360; s /= 100; l /= 100;
+  let r, g, b;
+  if (s === 0) { r = g = b = l; }
+  else {
+    const hue2rgb = (p, q, t) => {
+      if (t < 0) t += 1; if (t > 1) t -= 1;
+      if (t < 1/6) return p + (q - p) * 6 * t;
+      if (t < 1/2) return q;
+      if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+      return p;
+    };
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    const p = 2 * l - q;
+    r = hue2rgb(p, q, h + 1/3);
+    g = hue2rgb(p, q, h);
+    b = hue2rgb(p, q, h - 1/3);
+  }
+  return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+}
+
+function updatePreview(r, g, b) {
+  const hex = '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0').toUpperCase()).join('');
+  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+  const fg = brightness > 128 ? '#000' : '#fff';
+  $('preview').style.background = hex;
+  $('previewText').textContent = hex;
+  $('previewText').style.color = fg;
+  $('colorPicker').value = hex;
+  updatePalette(r, g, b);
+}
+
+function fromHex() {
+  let v = $('hex').value.replace(/[^0-9a-fA-F]/g, '').slice(0, 6);
+  if (v.length === 3) v = v[0]+v[0]+v[1]+v[1]+v[2]+v[2];
+  if (v.length !== 6) return;
+  const r = parseInt(v.slice(0,2),16), g = parseInt(v.slice(2,4),16), b = parseInt(v.slice(4,6),16);
+  setRgbFields(r, g, b);
+  setHslFields(...rgbToHsl(r, g, b));
+  setSliders(r, g, b);
+  updatePreview(r, g, b);
+}
+
+function fromRgb() {
+  const r = clamp(+$('r').value||0, 0, 255);
+  const g = clamp(+$('g').value||0, 0, 255);
+  const b = clamp(+$('b').value||0, 0, 255);
+  setHexField(r, g, b);
+  setHslFields(...rgbToHsl(r, g, b));
+  setSliders(r, g, b);
+  updatePreview(r, g, b);
+}
+
+function fromHsl() {
+  const h = clamp(+$('h').value||0, 0, 360);
+  const s2 = clamp(+$('s').value||0, 0, 100);
+  const l2 = clamp(+$('l').value||0, 0, 100);
+  const [r, g, b] = hslToRgb(h, s2, l2);
+  setHexField(r, g, b);
+  setRgbFields(r, g, b);
+  setSliders(r, g, b);
+  updatePreview(r, g, b);
+}
+
+function fromSlider() {
+  const r = +$('sr').value, g = +$('sg').value, b = +$('sb').value;
+  $('srv').textContent = r; $('sgv').textContent = g; $('sbv').textContent = b;
+  setHexField(r, g, b);
+  setRgbFields(r, g, b);
+  setHslFields(...rgbToHsl(r, g, b));
+  updatePreview(r, g, b);
+}
+
+function setHexField(r, g, b) {
+  $('hex').value = [r, g, b].map(v => v.toString(16).padStart(2, '0').toUpperCase()).join('');
+}
+function setRgbFields(r, g, b) {
+  $('r').value = r; $('g').value = g; $('b').value = b;
+}
+function setHslFields(h, s, l) {
+  $('h').value = h; $('s').value = s; $('l').value = l;
+}
+function setSliders(r, g, b) {
+  $('sr').value = r; $('sg').value = g; $('sb').value = b;
+  $('srv').textContent = r; $('sgv').textContent = g; $('sbv').textContent = b;
+}
+
+function updatePalette(r, g, b) {
+  const [h, s, l] = rgbToHsl(r, g, b);
+  const offsets = [-30, -15, 0, 15, 30, 150, 180];
+  const row = $('paletteRow');
+  row.innerHTML = '';
+  offsets.forEach(offset => {
+    const nh = ((h + offset) % 360 + 360) % 360;
+    const [pr, pg, pb] = hslToRgb(nh, s, l);
+    const hex = '#' + [pr, pg, pb].map(v => v.toString(16).padStart(2, '0')).join('');
+    const swatch = document.createElement('div');
+    swatch.className = 'swatch';
+    swatch.style.background = hex;
+    swatch.title = hex.toUpperCase();
+    swatch.onclick = () => {
+      $('hex').value = hex.slice(1).toUpperCase();
+      fromHex();
+    };
+    row.appendChild(swatch);
+  });
+}
+
+function copy(type) {
+  const r = +$('r').value, g = +$('g').value, b = +$('b').value;
+  let text;
+  if (type === 'hex') text = '#' + $('hex').value;
+  else if (type === 'rgb') text = `rgb(${r}, ${g}, ${b})`;
+  else text = `hsl(${$('h').value}, ${$('s').value}%, ${$('l').value}%)`;
+  navigator.clipboard.writeText(text).then(() => toast(`복사됨: ${text}`));
+}
+
+function toast(msg) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 1500);
+}
+
+// 초기화
+fromHex();
+</script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+{
+  "jobs": [
+    {
+      "id": "weekly-it-term",
+      "topic": "프롬프트 엔지니어링이란?",
+      "series": "B",
+      "slide_count": 5,
+      "badge": "알쓸IT잡",
+      "account": "@claudecode.kr",
+      "png": true,
+      "schedule": {
+        "type": "cron",
+        "day_of_week": "mon",
+        "hour": 9,
+        "minute": 0
+      }
+    },
+    {
+      "id": "weekly-column",
+      "topic": "AI 시대에 마케터가 살아남는 법",
+      "series": "A",
+      "slide_count": 7,
+      "badge": "코딩하는 마케터",
+      "account": "@claudecode.kr",
+      "png": true,
+      "schedule": {
+        "type": "cron",
+        "day_of_week": "wed",
+        "hour": 9,
+        "minute": 0
+      }
+    },
+    {
+      "id": "test-now",
+      "topic": "Claude Code 스케줄러 테스트",
+      "series": "A",
+      "slide_count": 7,
+      "badge": "코딩하는 마케터",
+      "account": "@claudecode.kr",
+      "png": true,
+      "schedule": {
+        "type": "interval",
+        "hours": 999
+      }
+    }
+  ]
+}

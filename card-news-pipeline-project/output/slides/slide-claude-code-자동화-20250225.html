@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>슬라이드 — A시리즈 · Claude Code로 업무 자동화하기</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  .slide {
+    width: 1080px; height: 1080px;
+    background: #0d1117; color: #e6edf3;
+    font-family: 'Noto Sans KR', sans-serif;
+    position: relative; overflow: hidden;
+    display: flex; flex-direction: column;
+    justify-content: space-between; padding: 80px;
+  }
+
+  /* 표지 */
+  .slide.cover {
+    background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #0d1117 100%);
+    justify-content: center; align-items: flex-start;
+  }
+  .cover-badge {
+    display: inline-block; padding: 8px 20px;
+    background: rgba(88,166,255,0.12); border: 1px solid rgba(88,166,255,0.3);
+    border-radius: 20px; color: #58a6ff; font-size: 24px; font-weight: 500;
+    letter-spacing: 1px; margin-bottom: 40px;
+  }
+  .cover-title {
+    font-size: 72px; font-weight: 900; line-height: 1.15; color: #fff;
+    letter-spacing: -1px; margin-bottom: 32px; word-break: keep-all;
+  }
+  .cover-title span { color: #58a6ff; }
+  .cover-subtitle { font-size: 30px; color: #8b949e; font-weight: 400; line-height: 1.5; word-break: keep-all; }
+
+  /* 본문 */
+  .slide.content { background: #0d1117; }
+  .slide-num { font-size: 20px; color: #30363d; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; }
+  .section-label {
+    display: inline-block; padding: 6px 16px;
+    background: rgba(88,166,255,0.08); border-left: 3px solid #58a6ff;
+    color: #58a6ff; font-size: 22px; font-weight: 600; margin-bottom: 24px;
+  }
+  .content-title { font-size: 52px; font-weight: 800; color: #fff; line-height: 1.2; margin-bottom: 32px; word-break: keep-all; }
+  .content-body { font-size: 30px; color: #8b949e; line-height: 1.8; word-break: keep-all; flex: 1; }
+  .content-body strong { color: #e6edf3; font-weight: 700; }
+  .content-body .highlight { color: #f0883e; font-weight: 700; }
+
+  /* 포인트 */
+  .slide.point {
+    background: linear-gradient(135deg, #0d1117, #161b22);
+    justify-content: center; align-items: center; text-align: center;
+  }
+  .big-number {
+    font-size: 180px; font-weight: 900; color: #58a6ff; line-height: 1; opacity: 0.15;
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -55%);
+  }
+  .point-text { font-size: 48px; font-weight: 700; color: #fff; line-height: 1.4; position: relative; z-index: 1; word-break: keep-all; max-width: 800px; }
+
+  /* 마무리 */
+  .slide.outro {
+    background: linear-gradient(135deg, #161b22 0%, #0d1117 100%);
+    justify-content: space-between;
+  }
+  .outro-quote { font-size: 42px; font-weight: 300; color: #e6edf3; line-height: 1.6; border-left: 4px solid #58a6ff; padding-left: 40px; word-break: keep-all; flex: 1; display: flex; align-items: center; }
+  .outro-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #21262d; padding-top: 32px; }
+  .author-name { font-size: 28px; font-weight: 700; color: #e6edf3; }
+  .author-handle { font-size: 24px; color: #58a6ff; margin-top: 6px; }
+  .cta-text { font-size: 26px; color: #8b949e; text-align: right; }
+
+  /* 공통 푸터 */
+  .slide-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #21262d; padding-top: 28px; margin-top: 28px; }
+  .brand { font-size: 22px; font-weight: 700; color: #30363d; letter-spacing: 1px; }
+  .progress-dots { display: flex; gap: 8px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: #21262d; }
+  .dot.active { background: #58a6ff; }
+
+  /* 장식선 */
+  .deco-line { position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #58a6ff, #7c8cf8, #58a6ff); }
+
+  /* 리스트 */
+  .list-item { display: flex; align-items: flex-start; gap: 24px; padding: 24px 0; border-bottom: 1px solid #21262d; }
+  .list-item:last-child { border-bottom: none; }
+  .list-num { width: 48px; height: 48px; border-radius: 12px; background: rgba(88,166,255,0.12); color: #58a6ff; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 800; flex-shrink: 0; margin-top: 4px; }
+  .list-title { font-size: 32px; font-weight: 700; color: #e6edf3; margin-bottom: 8px; word-break: keep-all; }
+  .list-desc { font-size: 26px; color: #8b949e; line-height: 1.6; word-break: keep-all; }
+</style>
+</head>
+<body>
+
+<!-- ══ 슬라이드 1 / 7 — 표지 ══ -->
+<div class="slide cover">
+  <div class="deco-line"></div>
+  <div class="cover-badge">코딩하는 마케터</div>
+  <div>
+    <div class="cover-title">Claude Code로<br><span>업무 자동화하기</span></div>
+    <div class="cover-subtitle">AI 에이전트에게 일 시키는 법,<br>지금 바로 시작할 수 있습니다</div>
+  </div>
+  <div class="slide-footer">
+    <div class="brand">@claudecode.kr</div>
+    <div class="progress-dots">
+      <div class="dot active"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+  </div>
+</div>
+
+<br><br>
+
+<!-- ══ 슬라이드 2 / 7 — 본문: 문제 제기 ══ -->
+<div class="slide content">
+  <div class="slide-num">01 / 07</div>
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:40px 0">
+    <div class="section-label">문제</div>
+    <div class="content-title">매일 똑같은 일을<br>왜 사람이 해야 할까?</div>
+    <div class="content-body">
+      보고서 정리, 파일 이름 변경, 이메일 초안 작성…<br>
+      <strong>반복되는 업무에 하루 2-3시간</strong>을 쓰고 있다면<br><br>
+      이제는 <span class="highlight">Claude Code에게 위임</span>할 시간입니다.
+    </div>
+  </div>
+  <div class="slide-footer">
+    <div class="brand">@claudecode.kr</div>
+    <div class="progress-dots">
+      <div class="dot active"></div>
+      <div class="dot active"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+  </div>
+</div>
+
+<br><br>
+
+<!-- ══ 슬라이드 3 / 7 — 본문: Claude Code란 ══ -->
+<div class="slide content">
+  <div class="slide-num">02 / 07</div>
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:40px 0">
+    <div class="section-label">개념</div>
+    <div class="content-title">Claude Code가<br>정확히 뭔가요?</div>
+    <div class="content-body">
+      터미널에서 직접 실행되는 <strong>AI 코딩 에이전트</strong>입니다.<br><br>
+      "파일 100개 이름 바꿔줘"라고 말하면<br>
+      스크립트를 짜고, 실행하고, 결과까지<br>
+      <span class="highlight">알아서 처리</span>합니다.
+    </div>
+  </div>
+  <div class="slide-footer">
+    <div class="brand">@claudecode.kr</div>
+    <div class="progress-dots">
+      <div class="dot active"></div>
+      <div class="dot active"></div>
+      <div class="dot active"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+  </div>
+</div>
+
+<br><br>
+
+<!-- ══ 슬라이드 4 / 7 — 리스트: 자동화 가능 업무 ══ -->
+<div class="slide content">
+  <div class="slide-num">03 / 07</div>
+  <div style="flex:1;padding:20px 0">
+    <div class="content-title" style="margin-bottom:36px">자동화 가능한<br>업무 4가지</div>
+    <div class="list-item">
+      <div class="list-num">1</div>
+      <div class="list-content">
+        <div class="list-title">문서 처리</div>
+        <div class="list-desc">PDF 추출, 엑셀 정리, 보고서 초안 자동 생성</div>
+      </div>
+    </div>
+    <div class="list-item">
+      <div class="list-num">2</div>
+      <div class="list-content">
+        <div class="list-title">파일 관리</div>
+        <div class="list-desc">이름 변경, 폴더 분류, 중복 파일 제거</div>
+      </div>
+    </div>
+    <div class="list-item">
+      <div class="list-num">3</div>
+      <div class="list-content">
+        <div class="list-title">콘텐츠 제작</div>
+        <div class="list-desc">카드뉴스 슬라이드, SNS 캡션, 뉴스레터 초안</div>
+      </div>
+    </div>
+    <div class="list-item">
+      <div class="list-num">4</div>
+      <div class="list-content">
+        <div class="list-title">데이터 분석</div>
+        <div class="list-desc">CSV 파싱, 통계 요약, 차트 생성 스크립트</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <div class="brand">@claudecode.kr</div>
+    <div class="progress-dots">
+      <div class="dot active"></div>
+      <div class="dot active"></div>
+      <div class="dot active"></div>
+      <div class="dot active"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+  </div>
+</div>
+
+<br><br>
+
+<!-- ══ 슬라이드 5 / 7 — 본문: 실전 팁 ══ -->
+<div class="slide content">
+  <div class="slide-num">04 / 07</div>
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:40px 0">
+    <div class="section-label">실전 팁</div>
+    <div class="content-title">잘 시키는 것도<br>실력입니다</div>
+    <div class="content-body">
+      <strong>나쁜 지시:</strong> "파일 정리해줘"<br>
+      <strong>좋은 지시:</strong> "Desktop/보고서 폴더에서<br>
+      2024년 파일만 골라 연도별 폴더로 이동해줘"<br><br>
+      <span class="highlight">구체적일수록 결과가 정확</span>합니다.
+    </div>
+  </div>
+  <div class="slide-footer">
+    <div class="brand">@claudecode.kr</div>
+    <div class="progress-dots">
+      <div class="dot active"></div>
+      <div class="dot active"></div>
+      <div class="dot active"></div>
+      <div class="dot active"></div>
+      <div class="dot active"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+  </div>
+</div>
+
+<br><br>
+
+<!-- ══ 슬라이드 6 / 7 — 포인트 ══ -->
+<div class="slide point">
+  <div class="big-number">∞</div>
+  <div class="point-text">
+    "코딩을 몰라도 괜찮습니다.<br>
+    <span style="color:#58a6ff">무엇을 원하는지</span> 알면 됩니다."
+  </div>
+</div>
+
+<br><br>
+
+<!-- ══ 슬라이드 7 / 7 — 마무리 ══ -->
+<div class="slide outro">
+  <div class="deco-line"></div>
+  <div class="outro-quote">
+    "AI는 대체가 아니라 증폭입니다.<br>
+    내 업무를 10배 빠르게 처리하고,<br>
+    남은 시간에 더 중요한 일을 하세요."
+  </div>
+  <div class="outro-footer">
+    <div>
+      <div class="author-name">Claude Code</div>
+      <div class="author-handle">@claudecode.kr</div>
+    </div>
+    <div class="cta-text">
+      저장하고<br>나중에 다시 보세요 💾
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

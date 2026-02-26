@@ -1,0 +1,28 @@
+{
+  "model_id": "kakaocorp/kanana-1.5-v-3b-instruct",
+  "downloaded_at": "2025-08-07T22:52:07.880264",
+  "files_downloaded": 14,
+  "total_size_bytes": 17421607,
+  "local_path": "/mnt/c/Users/SAMSUNG/Desktop/저작권/huggingface_kakaotalk_tools/chatbots/kakaocorp_kanana-1.5-v-3b-instruct",
+  "huggingface_url": "https://huggingface.co/kakaocorp/kanana-1.5-v-3b-instruct",
+  "description": "",
+  "tags": [
+    "transformers",
+    "safetensors",
+    "kanana-1.5-v",
+    "image-to-text",
+    "image-text-to-text",
+    "conversational",
+    "custom_code",
+    "ko",
+    "en",
+    "base_model:kakaocorp/kanana-1.5-v-3b-instruct",
+    "base_model:finetune:kakaocorp/kanana-1.5-v-3b-instruct",
+    "license:other",
+    "region:us"
+  ],
+  "downloads": 11758,
+  "likes": 41,
+  "pipeline_tag": "image-text-to-text",
+  "library_name": "transformers"
+}

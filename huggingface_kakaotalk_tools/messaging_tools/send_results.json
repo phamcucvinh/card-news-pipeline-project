@@ -1,0 +1,17 @@
+[
+  {
+    "phone_number": "010-1234-5678",
+    "status": "success",
+    "sent_at": "2025-08-10T09:33:59.719415"
+  },
+  {
+    "phone_number": "010-2345-6789",
+    "status": "success",
+    "sent_at": "2025-08-10T09:34:00.719895"
+  },
+  {
+    "phone_number": "010-3456-7890",
+    "status": "success",
+    "sent_at": "2025-08-10T09:34:01.720793"
+  }
+]

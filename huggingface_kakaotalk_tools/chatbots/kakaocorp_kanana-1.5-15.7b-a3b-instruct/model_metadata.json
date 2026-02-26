@@ -1,0 +1,28 @@
+{
+  "model_id": "kakaocorp/kanana-1.5-15.7b-a3b-instruct",
+  "downloaded_at": "2025-08-07T22:52:42.518233",
+  "files_downloaded": 9,
+  "total_size_bytes": 17912183,
+  "local_path": "/mnt/c/Users/SAMSUNG/Desktop/저작권/huggingface_kakaotalk_tools/chatbots/kakaocorp_kanana-1.5-15.7b-a3b-instruct",
+  "huggingface_url": "https://huggingface.co/kakaocorp/kanana-1.5-15.7b-a3b-instruct",
+  "description": "",
+  "tags": [
+    "transformers",
+    "safetensors",
+    "mixtral",
+    "text-generation",
+    "conversational",
+    "en",
+    "ko",
+    "arxiv:2502.18934",
+    "license:other",
+    "autotrain_compatible",
+    "text-generation-inference",
+    "endpoints_compatible",
+    "region:us"
+  ],
+  "downloads": 2507,
+  "likes": 16,
+  "pipeline_tag": "text-generation",
+  "library_name": "transformers"
+}

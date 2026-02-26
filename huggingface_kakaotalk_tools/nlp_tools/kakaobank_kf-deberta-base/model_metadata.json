@@ -1,0 +1,24 @@
+{
+  "model_id": "kakaobank/kf-deberta-base",
+  "downloaded_at": "2025-08-07T22:51:01.178767",
+  "files_downloaded": 8,
+  "total_size_bytes": 5075905,
+  "local_path": "/mnt/c/Users/SAMSUNG/Desktop/저작권/huggingface_kakaotalk_tools/nlp_tools/kakaobank_kf-deberta-base",
+  "huggingface_url": "https://huggingface.co/kakaobank/kf-deberta-base",
+  "description": "",
+  "tags": [
+    "transformers",
+    "pytorch",
+    "deberta-v2",
+    "fill-mask",
+    "ko",
+    "license:mit",
+    "autotrain_compatible",
+    "endpoints_compatible",
+    "region:us"
+  ],
+  "downloads": 48336,
+  "likes": 47,
+  "pipeline_tag": "fill-mask",
+  "library_name": "transformers"
+}

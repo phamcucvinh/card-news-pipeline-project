@@ -1,0 +1,28 @@
+{
+  "model_id": "kakaocorp/kanana-1.5-2.1b-instruct-2505",
+  "downloaded_at": "2025-08-07T22:51:14.614676",
+  "files_downloaded": 8,
+  "total_size_bytes": 17296257,
+  "local_path": "/mnt/c/Users/SAMSUNG/Desktop/저작권/huggingface_kakaotalk_tools/chatbots/kakaocorp_kanana-1.5-2.1b-instruct-2505",
+  "huggingface_url": "https://huggingface.co/kakaocorp/kanana-1.5-2.1b-instruct-2505",
+  "description": "",
+  "tags": [
+    "transformers",
+    "safetensors",
+    "llama",
+    "text-generation",
+    "conversational",
+    "en",
+    "ko",
+    "arxiv:2502.18934",
+    "license:apache-2.0",
+    "autotrain_compatible",
+    "text-generation-inference",
+    "endpoints_compatible",
+    "region:us"
+  ],
+  "downloads": 32007,
+  "likes": 28,
+  "pipeline_tag": "text-generation",
+  "library_name": "transformers"
+}

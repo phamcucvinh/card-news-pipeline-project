@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>슬라이드 템플릿 — C시리즈 (시네마틱)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  .slide {
+    width: 1080px;
+    height: 1080px;
+    font-family: 'Noto Sans KR', sans-serif;
+    position: relative;
+    overflow: hidden;
+    background: #1c1c1e;
+    color: #ffffff;
+  }
+
+  /* ══ 표지 ══ */
+  .slide.cinematic-cover {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 80px;
+    background: #000;
+  }
+  .film-strip {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 8px;
+    display: flex;
+    gap: 2px;
+  }
+  .film-hole {
+    flex: 1;
+    background: rgba(255,255,255,0.08);
+    border-radius: 2px;
+  }
+  .cover-eyebrow {
+    font-size: 20px;
+    font-weight: 300;
+    color: #f5a623;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+  }
+  .cover-main-title {
+    font-size: 80px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+    letter-spacing: -1.5px;
+    margin-bottom: 24px;
+    word-break: keep-all;
+  }
+  .cover-sub {
+    font-size: 28px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.6;
+    word-break: keep-all;
+    padding-bottom: 60px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  .cover-author {
+    margin-top: 36px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .author-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #f5a623;
+  }
+  .author-info {
+    font-size: 22px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.4);
+  }
+  .cover-bg-num {
+    position: absolute;
+    top: 50%;
+    right: -40px;
+    transform: translateY(-50%);
+    font-size: 400px;
+    font-weight: 900;
+    color: rgba(255,255,255,0.02);
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  /* ══ 본문 슬라이드 — 텍스트 중심 ══ */
+  .slide.cinematic-content {
+    background: #1c1c1e;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px;
+  }
+  .slide-progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: #f5a623;
+    width: 40%; /* JS로 조정 */
+  }
+  .c-content-text {
+    font-size: 44px;
+    font-weight: 300;
+    line-height: 1.8;
+    color: rgba(255,255,255,0.85);
+    word-break: keep-all;
+  }
+  .c-content-text strong {
+    font-weight: 700;
+    color: #fff;
+  }
+  .c-content-text .gold {
+    color: #f5a623;
+    font-weight: 500;
+  }
+  .c-content-text em {
+    font-style: normal;
+    color: rgba(255,255,255,0.5);
+    font-size: 0.85em;
+  }
+
+  /* ══ 인용 슬라이드 ══ */
+  .slide.cinematic-quote {
+    background: #000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 100px;
+    text-align: center;
+  }
+  .quote-mark {
+    font-size: 120px;
+    color: rgba(245,166,35,0.15);
+    line-height: 0.8;
+    margin-bottom: 32px;
+    font-family: Georgia, serif;
+  }
+  .quote-text {
+    font-size: 48px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.9);
+    line-height: 1.6;
+    word-break: keep-all;
+    letter-spacing: -0.5px;
+  }
+  .quote-text strong {
+    font-weight: 700;
+    color: #fff;
+  }
+  .quote-line {
+    width: 80px;
+    height: 1px;
+    background: #f5a623;
+    margin: 48px auto 32px;
+  }
+  .quote-source {
+    font-size: 22px;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 1px;
+  }
+
+  /* ══ 대비 슬라이드 (Before/After) ══ */
+  .slide.cinematic-contrast {
+    background: #1c1c1e;
+    display: flex;
+    flex-direction: column;
+    padding: 80px;
+    gap: 24px;
+  }
+  .contrast-label {
+    font-size: 20px;
+    color: #f5a623;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  .contrast-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    flex: 1;
+  }
+  .contrast-box {
+    background: rgba(255,255,255,0.04);
+    border-radius: 20px;
+    padding: 48px 40px;
+    display: flex;
+    flex-direction: column;
+  }
+  .contrast-box.before { border-top: 3px solid rgba(255,255,255,0.1); }
+  .contrast-box.after { border-top: 3px solid #f5a623; }
+  .contrast-tag {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .contrast-box.before .contrast-tag { color: rgba(255,255,255,0.3); }
+  .contrast-box.after .contrast-tag { color: #f5a623; }
+  .contrast-text {
+    font-size: 30px;
+    font-weight: 300;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.7);
+    flex: 1;
+    word-break: keep-all;
+  }
+  .contrast-box.after .contrast-text { color: rgba(255,255,255,0.9); }
+
+  /* ══ 마무리 슬라이드 ══ */
+  .slide.cinematic-outro {
+    background: #000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 80px;
+  }
+  .outro-series {
+    font-size: 18px;
+    color: rgba(255,255,255,0.2);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 48px;
+  }
+  .outro-logo {
+    font-size: 52px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 16px;
+    letter-spacing: -1px;
+  }
+  .outro-handle {
+    font-size: 28px;
+    font-weight: 300;
+    color: #f5a623;
+    margin-bottom: 64px;
+    letter-spacing: 1px;
+  }
+  .outro-cta {
+    font-size: 26px;
+    color: rgba(255,255,255,0.3);
+    line-height: 1.8;
+  }
+  .film-strip-bottom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 8px;
+    display: flex;
+    gap: 2px;
+  }
+
+  /* ══ 공통 페이지 번호 ══ */
+  .page-num {
+    position: absolute;
+    bottom: 48px;
+    right: 80px;
+    font-size: 20px;
+    color: rgba(255,255,255,0.2);
+    font-weight: 300;
+    letter-spacing: 1px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ 표지 ══ -->
+<div class="slide cinematic-cover">
+  <div class="film-strip">
+    <div class="film-hole"></div><div class="film-hole"></div>
+    <div class="film-hole"></div><div class="film-hole"></div>
+    <div class="film-hole"></div><div class="film-hole"></div>
+    <div class="film-hole"></div><div class="film-hole"></div>
+    <div class="film-hole"></div><div class="film-hole"></div>
+  </div>
+  <div class="cover-bg-num">1</div>
+  <div class="cover-eyebrow">커리어 레터</div>
+  <div class="cover-main-title">
+    퇴사하기 전에<br>제가 몰랐던 것들
+  </div>
+  <div class="cover-sub">
+    3년 차에 깨달은,<br>아무도 가르쳐주지 않는 직장 생활의 진실
+  </div>
+  <div class="cover-author">
+    <div class="author-dot"></div>
+    <div class="author-info">임지은 · @imjieun.mkt</div>
+  </div>
+</div>
+
+<br><br>
+
+<!-- ══ 본문 1 ══ -->
+<div class="slide cinematic-content">
+  <div class="slide-progress" style="width:20%"></div>
+  <div class="c-content-text">
+    3년을 다니고 나서야 알았습니다.<br><br>
+    일을 잘한다는 것과<br>
+    <strong>커리어를 잘 쌓는다는 것</strong>은<br>
+    완전히 다른 이야기라는 걸.
+  </div>
+  <div class="page-num">01</div>
+</div>
+
+<br><br>
+
+<!-- ══ 인용 슬라이드 ══ -->
+<div class="slide cinematic-quote">
+  <div class="quote-mark">"</div>
+  <div class="quote-text">
+    성과를 내는 것만큼<br>
+    <strong>성과를 보여주는 것</strong>이<br>
+    중요했습니다
+  </div>
+  <div class="quote-line"></div>
+  <div class="quote-source">임지은 · 커리어 레터 #012</div>
+</div>
+
+<br><br>
+
+<!-- ══ 대비 슬라이드 ══ -->
+<div class="slide cinematic-contrast">
+  <div class="contrast-label">Before / After</div>
+  <div class="contrast-grid">
+    <div class="contrast-box before">
+      <div class="contrast-tag">3년 전 나</div>
+      <div class="contrast-text">
+        열심히 하면<br>
+        알아서 인정받겠지
+      </div>
+    </div>
+    <div class="contrast-box after">
+      <div class="contrast-tag">지금의 나</div>
+      <div class="contrast-text">
+        성과는 만들고<br>
+        <strong>반드시 알려야</strong> 한다
+      </div>
+    </div>
+  </div>
+</div>
+
+<br><br>
+
+<!-- ══ 마무리 ══ -->
+<div class="slide cinematic-outro">
+  <div class="outro-series">커리어 레터 · Career Letter</div>
+  <div class="outro-logo">임지은</div>
+  <div class="outro-handle">@imjieun.mkt</div>
+  <div class="outro-cta">
+    이 글이 도움이 됐다면<br>
+    주변 동료에게 공유해 주세요 💌
+  </div>
+  <div class="film-strip-bottom">
+    <div class="film-hole"></div><div class="film-hole"></div>
+    <div class="film-hole"></div><div class="film-hole"></div>
+    <div class="film-hole"></div><div class="film-hole"></div>
+    <div class="film-hole"></div><div class="film-hole"></div>
+    <div class="film-hole"></div><div class="film-hole"></div>
+  </div>
+</div>
+
+</body>
+</html>

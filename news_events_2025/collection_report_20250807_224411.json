@@ -1,0 +1,22 @@
+{
+  "collection_date": "2025-08-07T22:44:11.968135",
+  "year": 2025,
+  "statistics": {
+    "sources_processed": 8,
+    "news_found": 0,
+    "news_downloaded": 0,
+    "events_identified": 0,
+    "errors": 0
+  },
+  "output_directory": "/mnt/c/Users/SAMSUNG/Desktop/저작권/news_events_2025",
+  "sources": [
+    "연합뉴스",
+    "조선일보",
+    "중앙일보",
+    "동아일보",
+    "KBS뉴스",
+    "MBC뉴스",
+    "SBS뉴스",
+    "YTN"
+  ]
+}

@@ -1,0 +1,22 @@
+=== 2025년 뉴스 이벤트 다운로드 보고서 ===
+
+수집 날짜: 2025-08-07 22:44:11
+대상 연도: 2025년
+저장 위치: /mnt/c/Users/SAMSUNG/Desktop/저작권/news_events_2025
+
+=== 수집 통계 ===
+처리된 뉴스 소스: 8
+발견된 뉴스: 0
+다운로드 완료: 0
+주요 이벤트: 0
+오류 발생: 0
+
+=== 처리된 뉴스 소스 ===
+- 연합뉴스: https://www.yna.co.kr
+- 조선일보: https://www.chosun.com
+- 중앙일보: https://www.joongang.co.kr
+- 동아일보: https://www.donga.com
+- KBS뉴스: https://news.kbs.co.kr
+- MBC뉴스: https://imnews.imbc.com
+- SBS뉴스: https://news.sbs.co.kr
+- YTN: https://www.ytn.co.kr

@@ -1,0 +1,58 @@
+{
+  "projectName": "카드뉴스 자동화 파이프라인",
+  "description": "마케터 임지은의 AI 에이전트 기반 카드뉴스 제작 시스템",
+  "version": "1.0.0",
+
+  "permissions": {
+    "allow": [
+      "Bash(python*)",
+      "Bash(bash scripts/*)",
+      "Bash(node*)",
+      "Bash(ls*)",
+      "Bash(mkdir*)",
+      "WebSearch",
+      "WebFetch"
+    ]
+  },
+
+  "subagents": {
+    "ct-researcher": {
+      "definition": "agents/ct-researcher.md",
+      "description": "웹 리서치 전문 에이전트"
+    },
+    "ct-cardnews-maker": {
+      "definition": "agents/ct-cardnews-maker.md",
+      "description": "HTML 카드뉴스 제작 에이전트"
+    },
+    "ct-theme-designer": {
+      "definition": "agents/ct-theme-designer.md",
+      "description": "테마 디자인 에이전트"
+    }
+  },
+
+  "skills": {
+    "brief-writer": "skills/brief-writer.md",
+    "column-writer": "skills/column-writer.md",
+    "text-formatter": "skills/text-formatter.md",
+    "caption-writer": "skills/caption-writer.md",
+    "longform-writer": "skills/longform-writer.md",
+    "thread-writer": "skills/thread-writer.md",
+    "save-to-notion": "skills/save-to-notion.md",
+    "validate-slide": "skills/validate-slide.md",
+    "html-to-png": "skills/html-to-png.md"
+  },
+
+  "pipelines": {
+    "A": "pipelines/pipeline-A.md",
+    "B": "pipelines/pipeline-B.md",
+    "C": "pipelines/pipeline-C.md"
+  },
+
+  "outputPaths": {
+    "research": "output/research/",
+    "columns": "output/columns/",
+    "slides": "output/slides/",
+    "images": "output/images/",
+    "captions": "output/captions/"
+  }
+}

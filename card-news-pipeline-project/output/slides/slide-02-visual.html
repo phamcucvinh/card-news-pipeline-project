@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>슬라이드 템플릿 — B시리즈 (비주얼 네이티브)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  .slide {
+    width: 1080px;
+    height: 1080px;
+    font-family: 'Noto Sans KR', sans-serif;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ══ 표지 슬라이드 (커서 애니메이션) ══ */
+  .slide.cover-B {
+    background: #0a0a0f;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .cover-B .series-tag {
+    font-size: 20px;
+    font-weight: 500;
+    color: #6366f1;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+  }
+  .cover-B .main-term {
+    font-size: 140px;
+    font-weight: 900;
+    color: #fff;
+    line-height: 1;
+    letter-spacing: -4px;
+    margin-bottom: 16px;
+    position: relative;
+    display: inline-block;
+  }
+  /* 커서 깜빡임 애니메이션 */
+  .cursor {
+    display: inline-block;
+    width: 8px;
+    height: 120px;
+    background: #6366f1;
+    margin-left: 8px;
+    vertical-align: bottom;
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+  .cover-B .term-def {
+    font-size: 32px;
+    color: #888;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+  }
+  .cover-B .bottom-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #6366f1, #818cf8, #a5b4fc);
+  }
+
+  /* ══ 정의 슬라이드 ══ */
+  .slide.definition {
+    background: #13131b;
+    display: flex;
+    flex-direction: column;
+    padding: 70px 80px;
+  }
+  .def-label {
+    font-size: 20px;
+    font-weight: 600;
+    color: #6366f1;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 48px;
+  }
+  .def-icon {
+    font-size: 100px;
+    margin-bottom: 40px;
+    line-height: 1;
+  }
+  .def-title {
+    font-size: 56px;
+    font-weight: 900;
+    color: #fff;
+    margin-bottom: 28px;
+    word-break: keep-all;
+  }
+  .def-body {
+    font-size: 32px;
+    color: #aaa;
+    line-height: 1.7;
+    word-break: keep-all;
+    flex: 1;
+  }
+  .def-body strong { color: #fff; }
+  .def-body .accent { color: #818cf8; font-weight: 700; }
+
+  /* ══ 비유 슬라이드 ══ */
+  .slide.analogy {
+    background: linear-gradient(135deg, #0f0f1a, #1a1a2e);
+    display: flex;
+    flex-direction: column;
+    padding: 70px 80px;
+    justify-content: center;
+  }
+  .analogy-label {
+    font-size: 20px;
+    color: #10b981;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 48px;
+    font-weight: 600;
+  }
+  .analogy-main {
+    display: flex;
+    align-items: center;
+    gap: 48px;
+    margin-bottom: 48px;
+  }
+  .analogy-emoji {
+    font-size: 120px;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+  .analogy-text {
+    font-size: 40px;
+    color: #e0e0e0;
+    line-height: 1.5;
+    word-break: keep-all;
+  }
+  .analogy-text .keyword {
+    color: #34d399;
+    font-weight: 800;
+  }
+  .analogy-sub {
+    background: rgba(16,185,129,0.06);
+    border: 1px solid rgba(16,185,129,0.15);
+    border-radius: 16px;
+    padding: 28px 36px;
+    font-size: 28px;
+    color: #888;
+    line-height: 1.6;
+    word-break: keep-all;
+  }
+
+  /* ══ 마케터 관점 슬라이드 ══ */
+  .slide.marketer-view {
+    background: #0a0a0f;
+    display: flex;
+    flex-direction: column;
+    padding: 70px 80px;
+  }
+  .mv-label {
+    font-size: 20px;
+    color: #f59e0b;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 48px;
+    font-weight: 600;
+  }
+  .mv-title {
+    font-size: 52px;
+    font-weight: 900;
+    color: #fff;
+    margin-bottom: 48px;
+    word-break: keep-all;
+  }
+  .mv-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    flex: 1;
+  }
+  .mv-card {
+    background: rgba(245,158,11,0.05);
+    border: 1px solid rgba(245,158,11,0.15);
+    border-radius: 16px;
+    padding: 24px 28px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .mv-card-icon { font-size: 36px; flex-shrink: 0; }
+  .mv-card-text {
+    font-size: 28px;
+    color: #ccc;
+    line-height: 1.5;
+    word-break: keep-all;
+  }
+  .mv-card-text strong { color: #fcd34d; }
+
+  /* ══ 정리 슬라이드 ══ */
+  .slide.summary-B {
+    background: #13131b;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 70px 80px;
+  }
+  .summary-badge {
+    font-size: 20px;
+    font-weight: 600;
+    color: #6366f1;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 40px;
+  }
+  .summary-title {
+    font-size: 60px;
+    font-weight: 900;
+    color: #fff;
+    margin-bottom: 48px;
+    word-break: keep-all;
+  }
+  .summary-points {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    text-align: left;
+  }
+  .summary-point {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: rgba(99,102,241,0.06);
+    border-radius: 14px;
+    padding: 22px 28px;
+  }
+  .sp-check { font-size: 28px; flex-shrink: 0; }
+  .sp-text {
+    font-size: 28px;
+    color: #ddd;
+    word-break: keep-all;
+  }
+  .sp-text strong { color: #a5b4fc; }
+  .follow-cta {
+    margin-top: 48px;
+    font-size: 26px;
+    color: #555;
+  }
+  .follow-cta span { color: #6366f1; }
+</style>
+</head>
+<body>
+
+<!-- ══ 표지 (커서 애니메이션) ══ -->
+<div class="slide cover-B">
+  <div class="series-tag">알쓸IT잡 · IT단어장</div>
+  <div class="main-term">
+    API<span class="cursor"></span>
+  </div>
+  <div class="term-def">Application Programming Interface</div>
+  <div class="bottom-bar"></div>
+</div>
+
+<br><br>
+
+<!-- ══ 정의 슬라이드 ══ -->
+<div class="slide definition">
+  <div class="def-label">Definition · 정의</div>
+  <div class="def-icon">🔌</div>
+  <div class="def-title">API가 뭔가요?</div>
+  <div class="def-body">
+    서로 다른 소프트웨어가<br>
+    <strong>대화하는 방식</strong>을 정한 규칙입니다.<br><br>
+    쉽게 말하면, 앱과 앱 사이의<br>
+    <span class="accent">"번역기 + 연결선"</span>
+  </div>
+</div>
+
+<br><br>
+
+<!-- ══ 비유 슬라이드 ══ -->
+<div class="slide analogy">
+  <div class="analogy-label">Real Life · 실생활 비유</div>
+  <div class="analogy-main">
+    <div class="analogy-emoji">🍽️</div>
+    <div class="analogy-text">
+      레스토랑의<br>
+      <span class="keyword">웨이터</span>와 같습니다
+    </div>
+  </div>
+  <div class="analogy-sub">
+    손님(앱)이 주문(요청)하면 → 웨이터(API)가 주방(서버)에 전달 → 음식(데이터)을 가져다줍니다
+  </div>
+</div>
+
+<br><br>
+
+<!-- ══ 마케터 관점 ══ -->
+<div class="slide marketer-view">
+  <div class="mv-label">For Marketers · 마케터 관점</div>
+  <div class="mv-title">마케터에게 API가<br>왜 필요할까?</div>
+  <div class="mv-cards">
+    <div class="mv-card">
+      <div class="mv-card-icon">📊</div>
+      <div class="mv-card-text"><strong>데이터 자동화</strong> — 광고 성과를 매일 수동으로 다운로드할 필요 없음</div>
+    </div>
+    <div class="mv-card">
+      <div class="mv-card-icon">🤖</div>
+      <div class="mv-card-text"><strong>AI 도구 연결</strong> — GPT, Claude를 내 서비스에 연결하는 것도 API</div>
+    </div>
+    <div class="mv-card">
+      <div class="mv-card-icon">⚡</div>
+      <div class="mv-card-text"><strong>업무 자동화</strong> — 재피어, 메이크 같은 노코드 툴도 API로 작동</div>
+    </div>
+  </div>
+</div>
+
+<br><br>
+
+<!-- ══ 정리 슬라이드 ══ -->
+<div class="slide summary-B">
+  <div class="summary-badge">Summary · 정리</div>
+  <div class="summary-title">API 핵심 요약</div>
+  <div class="summary-points">
+    <div class="summary-point">
+      <div class="sp-check">✅</div>
+      <div class="sp-text">API = <strong>앱과 앱의 연결 규칙</strong></div>
+    </div>
+    <div class="summary-point">
+      <div class="sp-check">✅</div>
+      <div class="sp-text">웨이터처럼 <strong>요청-전달-응답</strong></div>
+    </div>
+    <div class="summary-point">
+      <div class="sp-check">✅</div>
+      <div class="sp-text">마케터도 <strong>노코드 툴로 API 활용 가능</strong></div>
+    </div>
+  </div>
+  <div class="follow-cta">
+    더 알고 싶다면 팔로우 → <span>@imjieun.mkt</span>
+  </div>
+</div>
+
+</body>
+</html>

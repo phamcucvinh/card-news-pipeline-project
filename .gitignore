@@ -30,3 +30,59 @@ desktop.ini
 # Generator scripts (optional - 소스 코드는 포함하지 않음)
 manual*_generator.py
 create_*.py
+
+# Node
+node_modules/
+package-lock.json
+
+# Environment variables (sensitive)
+.env
+.env.*
+!.env.example
+
+# Python virtual environments
+*_env/
+
+# Large binaries / installers
+google-cloud-cli-*.tar.gz
+C56x_Series_WIN_Printer_*/
+
+# Build outputs
+dist_windows/
+build_windows/
+
+# Large media / personal files
+02_동영상/
+03_이미지/
+08_설치파일/
+mp3_output/
+
+# Downloaded external repos (embedded git repos)
+AI-Security-Projects-Downloaded/
+AI-Powered-Forex-Prediction-System-main/
+MQL4PRO2025/
+advanced-mapping-tool/
+anthropics-skills/
+automatic-kakaotalk-sender/
+card-news-node/
+card-news-skill/
+daniel8824-del_korea-forex/
+doc/
+gpt-author/
+vercel-labs/
+
+# Personal / permission-issue files
+01문서/
+09_웹파일/
+04_압축파일/
+07_스프레드시트/
+10_연락처/
+12_기타/
+
+# Large ebook/document collections (exceeds GitHub 100MB limit)
+책/
+책 - 복사본/
+돈스타브/
+
+# Large video files
+*.webm

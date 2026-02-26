@@ -1,0 +1,5 @@
+langchain-huggingface
+scrapegraphai
+gradio
+playwright
+python-dotenv

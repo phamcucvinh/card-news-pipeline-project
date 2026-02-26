@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>5년 일기 (2026~2030)</title>
+<style>
+  @page {
+    size: A4;
+    margin: 20mm 15mm 25mm 15mm;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+    font-size: 11pt;
+    color: #000;
+  }
+  .page {
+    page-break-after: always;
+    position: relative;
+    width: 100%;
+    min-height: calc(297mm - 45mm);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .page:last-child {
+    page-break-after: avoid;
+  }
+  .page-content {
+    flex: 1;
+  }
+  .day-block {
+    border-bottom: 1px solid #999;
+    padding: 4px 0 2px 0;
+    margin-bottom: 2px;
+  }
+  .day-header {
+    font-weight: bold;
+    font-size: 10.5pt;
+    margin-bottom: 2px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .day-header .date-text {
+    /* date */
+  }
+  .day-header .weekday {
+    font-size: 9.5pt;
+    color: #333;
+  }
+  .sunday .day-header {
+    color: #c00;
+  }
+  .saturday .day-header {
+    color: #0055aa;
+  }
+  .line {
+    border-bottom: 1px dotted #bbb;
+    height: 22px;
+    line-height: 22px;
+    margin-left: 5px;
+  }
+  .page-number {
+    text-align: center;
+    font-weight: bold;
+    font-size: 10pt;
+    padding-top: 8px;
+    color: #000;
+  }
+  .year-title {
+    text-align: center;
+    font-size: 16pt;
+    font-weight: bold;
+    padding: 10px 0 15px 0;
+    border-bottom: 2px solid #000;
+    margin-bottom: 8px;
+  }
+
+  @media print {
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .page { min-height: auto; height: calc(297mm - 45mm); }
+  }
+
+  @media screen {
+    body { background: #eee; }
+    .page {
+      background: #fff;
+      width: 210mm;
+      min-height: 297mm;
+      margin: 10px auto;
+      padding: 20mm 15mm 25mm 15mm;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+  }
+</style>
+</head>
+<body>
+<script>
+const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+
+function isLeapYear(y) {
+  return (y % 4 === 0 && y % 100 !== 0) || (y % 400 === 0);
+}
+
+function daysInMonth(y, m) {
+  return [31, isLeapYear(y) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][m];
+}
+
+// Collect all dates from 2026-01-01 to 2030-12-31
+let allDates = [];
+for (let y = 2026; y <= 2030; y++) {
+  for (let m = 0; m < 12; m++) {
+    let days = daysInMonth(y, m);
+    for (let d = 1; d <= days; d++) {
+      allDates.push(new Date(y, m, d));
+    }
+  }
+}
+
+// Split into pages of 7 days
+let pageNum = 0;
+let html = '';
+
+for (let i = 0; i < allDates.length; i += 7) {
+  pageNum++;
+  let chunk = allDates.slice(i, i + 7);
+  let firstDate = chunk[0];
+  let lastDate = chunk[chunk.length - 1];
+
+  // Check if new year starts in this chunk
+  let yearLabel = '';
+  if (i === 0 || chunk.some((d, idx) => idx > 0 && d.getMonth() === 0 && d.getDate() === 1) || firstDate.getMonth() === 0 && firstDate.getDate() === 1) {
+    // Find which year
+    let yr = firstDate.getFullYear();
+    if (firstDate.getMonth() === 0 && firstDate.getDate() === 1) {
+      yearLabel = yr + '년';
+    } else {
+      for (let c of chunk) {
+        if (c.getMonth() === 0 && c.getDate() === 1) {
+          yearLabel = c.getFullYear() + '년';
+          break;
+        }
+      }
+    }
+  }
+
+  // First page of the entire diary
+  if (i === 0) yearLabel = firstDate.getFullYear() + '년';
+
+  html += '<div class="page">';
+  html += '<div class="page-content">';
+
+  if (yearLabel) {
+    html += '<div class="year-title">' + yearLabel + '</div>';
+  }
+
+  for (let d of chunk) {
+    let dow = d.getDay();
+    let cls = dow === 0 ? 'sunday' : dow === 6 ? 'saturday' : '';
+    let mm = d.getMonth() + 1;
+    let dd = d.getDate();
+    let dateStr = mm + '월 ' + dd + '일 (' + weekdays[dow] + ')';
+
+    html += '<div class="day-block ' + cls + '">';
+    html += '<div class="day-header"><span class="date-text">' + dateStr + '</span></div>';
+    html += '<div class="line"></div>';
+    html += '<div class="line"></div>';
+    html += '<div class="line"></div>';
+    html += '</div>';
+  }
+
+  html += '</div>';
+  html += '<div class="page-number">' + pageNum + '</div>';
+  html += '</div>';
+}
+
+document.body.innerHTML = html;
+</script>
+</body>
+</html>

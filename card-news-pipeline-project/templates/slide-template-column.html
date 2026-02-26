@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>슬라이드 템플릿 — A시리즈 (칼럼 기반)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  /* ── 슬라이드 컨테이너 (1080x1080) ── */
+  .slide {
+    width: 1080px;
+    height: 1080px;
+    background: #0d1117;
+    color: #e6edf3;
+    font-family: 'Noto Sans KR', sans-serif;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 80px;
+  }
+
+  /* ── 표지 슬라이드 ── */
+  .slide.cover {
+    background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #0d1117 100%);
+    justify-content: center;
+    align-items: flex-start;
+  }
+  .cover-badge {
+    display: inline-block;
+    padding: 8px 20px;
+    background: rgba(88,166,255,0.12);
+    border: 1px solid rgba(88,166,255,0.3);
+    border-radius: 20px;
+    color: #58a6ff;
+    font-size: 24px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    margin-bottom: 40px;
+  }
+  .cover-title {
+    font-size: 72px;
+    font-weight: 900;
+    line-height: 1.15;
+    color: #fff;
+    letter-spacing: -1px;
+    margin-bottom: 32px;
+    word-break: keep-all;
+  }
+  .cover-title span { color: #58a6ff; }
+  .cover-subtitle {
+    font-size: 30px;
+    color: #8b949e;
+    font-weight: 400;
+    line-height: 1.5;
+    word-break: keep-all;
+  }
+
+  /* ── 본문 슬라이드 ── */
+  .slide.content {
+    background: #0d1117;
+  }
+  .slide-num {
+    font-size: 20px;
+    color: #30363d;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .section-label {
+    display: inline-block;
+    padding: 6px 16px;
+    background: rgba(88,166,255,0.08);
+    border-left: 3px solid #58a6ff;
+    color: #58a6ff;
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    letter-spacing: 0.5px;
+  }
+  .content-title {
+    font-size: 52px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 32px;
+    word-break: keep-all;
+  }
+  .content-body {
+    font-size: 30px;
+    color: #8b949e;
+    line-height: 1.8;
+    word-break: keep-all;
+    flex: 1;
+  }
+  .content-body strong {
+    color: #e6edf3;
+    font-weight: 700;
+  }
+  .content-body .highlight {
+    color: #f0883e;
+    font-weight: 700;
+  }
+
+  /* ── 포인트 슬라이드 (숫자 강조) ── */
+  .slide.point {
+    background: linear-gradient(135deg, #0d1117, #161b22);
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  .big-number {
+    font-size: 180px;
+    font-weight: 900;
+    color: #58a6ff;
+    line-height: 1;
+    opacity: 0.15;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -55%);
+  }
+  .point-text {
+    font-size: 48px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.4;
+    position: relative;
+    z-index: 1;
+    word-break: keep-all;
+    max-width: 800px;
+  }
+
+  /* ── 마무리 슬라이드 ── */
+  .slide.outro {
+    background: linear-gradient(135deg, #161b22 0%, #0d1117 100%);
+    justify-content: space-between;
+  }
+  .outro-quote {
+    font-size: 42px;
+    font-weight: 300;
+    color: #e6edf3;
+    line-height: 1.6;
+    border-left: 4px solid #58a6ff;
+    padding-left: 40px;
+    word-break: keep-all;
+    flex: 1;
+    display: flex;
+    align-items: center;
+  }
+  .outro-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #21262d;
+    padding-top: 32px;
+  }
+  .author-name {
+    font-size: 28px;
+    font-weight: 700;
+    color: #e6edf3;
+  }
+  .author-handle {
+    font-size: 24px;
+    color: #58a6ff;
+    margin-top: 6px;
+  }
+  .cta-text {
+    font-size: 26px;
+    color: #8b949e;
+    text-align: right;
+  }
+
+  /* ── 공통 하단 ── */
+  .slide-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #21262d;
+    padding-top: 28px;
+    margin-top: 28px;
+  }
+  .brand {
+    font-size: 22px;
+    font-weight: 700;
+    color: #30363d;
+    letter-spacing: 1px;
+  }
+  .progress-dots {
+    display: flex;
+    gap: 8px;
+  }
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #21262d;
+  }
+  .dot.active { background: #58a6ff; }
+
+  /* ── 장식 요소 ── */
+  .deco-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #58a6ff, #7c8cf8, #58a6ff);
+  }
+
+  /* ── 리스트 슬라이드 ── */
+  .list-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+    padding: 28px 0;
+    border-bottom: 1px solid #21262d;
+  }
+  .list-item:last-child { border-bottom: none; }
+  .list-num {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: rgba(88,166,255,0.12);
+    color: #58a6ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 800;
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+  .list-content {}
+  .list-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #e6edf3;
+    margin-bottom: 8px;
+    word-break: keep-all;
+  }
+  .list-desc {
+    font-size: 26px;
+    color: #8b949e;
+    line-height: 1.6;
+    word-break: keep-all;
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ 사용 예시 ══ -->
+
+<!-- 표지 슬라이드 -->
+<div class="slide cover">
+  <div class="deco-line"></div>
+  <div class="cover-badge">코딩하는 마케터</div>
+  <div>
+    <div class="cover-title">GPT로 칼럼 쓰는<br><span>마케터의 루틴</span></div>
+    <div class="cover-subtitle">AI 에이전트와 함께 콘텐츠 제작하는<br>실전 워크플로우 공개</div>
+  </div>
+  <div class="slide-footer">
+    <div class="brand">@imjieun.mkt</div>
+    <div class="progress-dots">
+      <div class="dot active"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+  </div>
+</div>
+
+<br><br>
+
+<!-- 본문 슬라이드 -->
+<div class="slide content">
+  <div class="slide-num">01 / 05</div>
+  <div class="main-content" style="flex:1; display:flex; flex-direction:column; justify-content:center; padding: 40px 0;">
+    <div class="section-label">배경</div>
+    <div class="content-title">마케터도 이제<br>코딩을 해야 할까?</div>
+    <div class="content-body">
+      <strong>정답은 "반드시"는 아닙니다.</strong><br>
+      하지만 AI 도구를 다룰 줄 아는 마케터와<br>
+      모르는 마케터의 생산성 차이는<br>
+      <span class="highlight">10배 이상</span>이 납니다.
+    </div>
+  </div>
+  <div class="slide-footer">
+    <div class="brand">@imjieun.mkt</div>
+    <div class="progress-dots">
+      <div class="dot active"></div>
+      <div class="dot active"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+  </div>
+</div>
+
+<br><br>
+
+<!-- 리스트 슬라이드 -->
+<div class="slide content">
+  <div class="slide-num">03 / 05</div>
+  <div style="flex:1; padding: 20px 0;">
+    <div class="content-title" style="margin-bottom: 40px;">제 루틴 3단계</div>
+    <div class="list-item">
+      <div class="list-num">1</div>
+      <div class="list-content">
+        <div class="list-title">주제 + 리서치</div>
+        <div class="list-desc">Claude에게 키워드 주면 research.md 자동 생성</div>
+      </div>
+    </div>
+    <div class="list-item">
+      <div class="list-num">2</div>
+      <div class="list-content">
+        <div class="list-title">방향성 컨펌</div>
+        <div class="list-desc">제목 3안 받아서 제가 선택</div>
+      </div>
+    </div>
+    <div class="list-item">
+      <div class="list-num">3</div>
+      <div class="list-content">
+        <div class="list-title">카드뉴스 자동화</div>
+        <div class="list-desc">칼럼 → 슬라이드 → PNG까지 자동</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <div class="brand">@imjieun.mkt</div>
+    <div class="progress-dots">
+      <div class="dot active"></div>
+      <div class="dot active"></div>
+      <div class="dot active"></div>
+      <div class="dot active"></div>
+      <div class="dot"></div>
+    </div>
+  </div>
+</div>
+
+<br><br>
+
+<!-- 마무리 슬라이드 -->
+<div class="slide outro">
+  <div class="deco-line"></div>
+  <div class="outro-quote">
+    "AI는 대체가 아니라 증폭입니다.<br>
+    내 아이디어를 10배 빠르게<br>
+    세상에 내보낼 수 있게 해주는 도구."
+  </div>
+  <div class="outro-footer">
+    <div>
+      <div class="author-name">임지은</div>
+      <div class="author-handle">@imjieun.mkt</div>
+    </div>
+    <div class="cta-text">
+      저장하고<br>나중에 다시 보세요 💾
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

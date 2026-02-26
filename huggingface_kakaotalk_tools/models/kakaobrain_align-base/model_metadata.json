@@ -1,0 +1,26 @@
+{
+  "model_id": "kakaobrain/align-base",
+  "downloaded_at": "2025-08-07T22:51:25.612565",
+  "files_downloaded": 7,
+  "total_size_bytes": 246170,
+  "local_path": "/mnt/c/Users/SAMSUNG/Desktop/저작권/huggingface_kakaotalk_tools/models/kakaobrain_align-base",
+  "huggingface_url": "https://huggingface.co/kakaobrain/align-base",
+  "description": "",
+  "tags": [
+    "transformers",
+    "pytorch",
+    "align",
+    "zero-shot-image-classification",
+    "vision",
+    "multi-modal",
+    "en",
+    "dataset:coyo-700m",
+    "arxiv:2102.05918",
+    "endpoints_compatible",
+    "region:us"
+  ],
+  "downloads": 31489,
+  "likes": 26,
+  "pipeline_tag": "zero-shot-image-classification",
+  "library_name": "transformers"
+}

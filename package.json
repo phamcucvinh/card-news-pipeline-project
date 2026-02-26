@@ -1,0 +1,25 @@
+{
+  "name": "pdf-to-mp3-converter",
+  "version": "1.0.0",
+  "description": "PDF를 MP3 음성 파일로 변환하는 Node.js 프로그램",
+  "main": "pdf_to_mp3_converter.js",
+  "scripts": {
+    "start": "node pdf_to_mp3_converter.js",
+    "test": "node test_converter.js"
+  },
+  "keywords": [
+    "pdf",
+    "mp3",
+    "tts",
+    "text-to-speech",
+    "converter"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "docx": "^9.5.1",
+    "docx-merger": "^1.2.2",
+    "gtts": "^0.2.1",
+    "pdf-parse": "^1.1.1"
+  }
+}

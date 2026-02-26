@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>카드뉴스 자동화 파이프라인</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Pretendard', -apple-system, sans-serif;
+    background: #0a0a0f;
+    color: #e0e0e0;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    text-align: center;
+    padding: 80px 40px 60px;
+    background: linear-gradient(180deg, #12121a 0%, #0a0a0f 100%);
+    position: relative;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(99,102,241,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-block;
+    padding: 6px 16px;
+    border-radius: 20px;
+    background: rgba(99,102,241,0.12);
+    border: 1px solid rgba(99,102,241,0.25);
+    color: #818cf8;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-size: 42px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 16px;
+    letter-spacing: -0.5px;
+  }
+  .hero h1 span { color: #818cf8; }
+  .hero p {
+    font-size: 17px;
+    color: #888;
+    max-width: 580px;
+    margin: 0 auto;
+  }
+
+  /* ── Container ── */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 32px 80px;
+  }
+
+  /* ── Section Title ── */
+  .section-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #fff;
+    margin: 192px 0 12px;
+    letter-spacing: -0.3px;
+  }
+  .container > .section-title:first-child {
+    margin-top: 64px;
+  }
+  .section-sub {
+    font-size: 17px;
+    color: #666;
+    margin-bottom: 36px;
+  }
+
+  /* ── Architecture Overview ── */
+  .arch-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 48px;
+  }
+  .arch-card {
+    background: #13131b;
+    border: 1px solid #1e1e2a;
+    border-radius: 16px;
+    padding: 28px 24px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+  .arch-card:hover { border-color: #333; }
+  .arch-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .arch-card:nth-child(1)::before { background: linear-gradient(90deg, #6366f1, #818cf8); }
+  .arch-card:nth-child(2)::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+  .arch-card:nth-child(3)::before { background: linear-gradient(90deg, #10b981, #34d399); }
+  .arch-icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    margin-bottom: 16px;
+  }
+  .arch-card:nth-child(1) .arch-icon { background: rgba(99,102,241,0.12); }
+  .arch-card:nth-child(2) .arch-icon { background: rgba(245,158,11,0.12); }
+  .arch-card:nth-child(3) .arch-icon { background: rgba(16,185,129,0.12); }
+  .arch-card h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+  .arch-card p {
+    font-size: 15.5px;
+    color: #888;
+    line-height: 1.7;
+  }
+  .arch-tag {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 13.5px;
+    font-weight: 500;
+    margin: 3px 4px 3px 0;
+  }
+  .tag-purple { background: rgba(99,102,241,0.12); color: #a5b4fc; }
+  .tag-amber  { background: rgba(245,158,11,0.12); color: #fcd34d; }
+  .tag-green  { background: rgba(16,185,129,0.12); color: #6ee7b7; }
+  .tag-rose   { background: rgba(244,63,94,0.12); color: #fda4af; }
+
+  /* ── Pipeline Flow ── */
+  .pipeline-section {
+    margin-bottom: 56px;
+  }
+  .pipeline-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 28px;
+    padding: 20px 24px;
+    background: #13131b;
+    border: 1px solid #1e1e2a;
+    border-radius: 14px;
+  }
+  .pipeline-num {
+    width: 42px; height: 42px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 800;
+    color: #fff;
+    flex-shrink: 0;
+  }
+  .pipeline-header h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .pipeline-header .desc {
+    font-size: 15px;
+    color: #666;
+    margin-top: 2px;
+  }
+
+  /* ── Flow Steps ── */
+  .flow {
+    position: relative;
+    padding-left: 36px;
+  }
+  .flow::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, #2a2a3a, #1a1a2a);
+  }
+  .step {
+    position: relative;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .step:last-child { margin-bottom: 0; }
+  .step-dot {
+    position: absolute;
+    left: -36px;
+    top: 14px;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    z-index: 1;
+    flex-shrink: 0;
+  }
+  .dot-indigo  { background: #4f46e5; box-shadow: 0 0 12px rgba(79,70,229,0.3); }
+  .dot-amber   { background: #d97706; box-shadow: 0 0 12px rgba(217,119,6,0.3); }
+  .dot-green   { background: #059669; box-shadow: 0 0 12px rgba(5,150,105,0.3); }
+  .dot-rose     { background: #e11d48; box-shadow: 0 0 12px rgba(225,29,72,0.3); }
+  .dot-cyan     { background: #0891b2; box-shadow: 0 0 12px rgba(8,145,178,0.3); }
+  .dot-confirm { background: transparent; border: 2.5px solid #f59e0b; box-shadow: 0 0 12px rgba(245,158,11,0.25); }
+  .dot-auto    { background: transparent; border: 2.5px dashed #6366f1; }
+
+  .step-card {
+    flex: 1;
+    background: #13131b;
+    border: 1px solid #1e1e2a;
+    border-radius: 12px;
+    padding: 16px 20px;
+    transition: border-color 0.2s;
+  }
+  .step-card:hover { border-color: #2a2a3a; }
+  .step-card.confirm-card {
+    background: rgba(245,158,11,0.04);
+    border-color: rgba(245,158,11,0.15);
+  }
+  .step-card.auto-card {
+    background: rgba(99,102,241,0.03);
+    border-color: rgba(99,102,241,0.12);
+    border-style: dashed;
+  }
+  .step-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+  .step-desc {
+    font-size: 15px;
+    color: #777;
+    line-height: 1.6;
+  }
+  .step-agent {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 10px;
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 13.5px;
+    font-weight: 500;
+    background: rgba(99,102,241,0.1);
+    color: #a5b4fc;
+  }
+  .step-agent.agent-human {
+    background: rgba(245,158,11,0.1);
+    color: #fcd34d;
+  }
+  .step-agent.agent-auto {
+    background: rgba(16,185,129,0.1);
+    color: #6ee7b7;
+  }
+  .step-output {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 10px;
+    margin-left: 6px;
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 13.5px;
+    font-weight: 500;
+    background: rgba(244,63,94,0.08);
+    color: #fda4af;
+  }
+
+  /* ── Branch ── */
+  .branch-box {
+    background: #111118;
+    border: 1px solid #1e1e2a;
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 10px;
+  }
+  .branch-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #6366f1;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+  }
+  .branch-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 6px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid #1a1a24;
+  }
+  .branch-item:last-child { margin-bottom: 0; }
+  .branch-emoji { font-size: 18px; flex-shrink: 0; }
+  .branch-text { font-size: 15px; color: #aaa; }
+  .branch-text strong { color: #ddd; font-weight: 600; }
+
+  /* ── Comparison Table ── */
+  .compare-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid #1e1e2a;
+    margin-top: 8px;
+  }
+  .compare-table th {
+    background: #16161e;
+    padding: 16px 20px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #999;
+    text-align: left;
+    border-bottom: 1px solid #1e1e2a;
+  }
+  .compare-table th:first-child { color: #fff; }
+  .compare-table td {
+    padding: 14px 20px;
+    font-size: 15px;
+    color: #aaa;
+    border-bottom: 1px solid #14141c;
+    background: #11111a;
+  }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .compare-table td:first-child {
+    font-weight: 600;
+    color: #ccc;
+  }
+  .cell-check { color: #34d399; }
+  .cell-dash  { color: #444; }
+
+  /* ── Legend ── */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px 24px;
+    background: #13131b;
+    border: 1px solid #1e1e2a;
+    border-radius: 14px;
+    margin-bottom: 40px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    color: #888;
+  }
+  .legend-dot {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .legend-dot.ld-agent    { background: #4f46e5; }
+  .legend-dot.ld-confirm  { background: transparent; border: 2px solid #f59e0b; }
+  .legend-dot.ld-auto     { background: transparent; border: 2px dashed #6366f1; }
+  .legend-dot.ld-output   { background: #e11d48; }
+
+  /* ── Tabs ── */
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 32px;
+  }
+  .tab-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 22px;
+    background: #13131b;
+    border: 1.5px solid #1e1e2a;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .tab-btn:hover { border-color: #333; }
+  .tab-btn.active { border-color: var(--tab-color); background: var(--tab-bg); }
+  .tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--tab-color);
+  }
+  .tab-num {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 800;
+    color: #fff;
+    flex-shrink: 0;
+    background: var(--tab-color);
+    opacity: 0.5;
+    transition: opacity 0.25s;
+  }
+  .tab-btn.active .tab-num { opacity: 1; }
+  .tab-info h3 {
+    font-size: 17px;
+    font-weight: 700;
+    color: #888;
+    transition: color 0.25s;
+  }
+  .tab-btn.active .tab-info h3 { color: #fff; }
+  .tab-info .tab-desc {
+    font-size: 14px;
+    color: #555;
+    margin-top: 3px;
+    transition: color 0.25s;
+  }
+  .tab-btn.active .tab-info .tab-desc { color: #777; }
+  .tab-panel {
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+  .tab-panel.active { display: block; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Footer ── */
+  .footer-note {
+    text-align: center;
+    padding: 40px;
+    color: #444;
+    font-size: 13px;
+  }
+  .footer-note a { color: #6366f1; text-decoration: none; }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .arch-grid { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 28px; }
+    .container { padding: 0 16px 60px; }
+    .tabs { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════ Hero ══════════ -->
+<div class="hero">
+  <div class="hero-badge">Claude Code + Multi-Agent System</div>
+  <h1>마케터 임지은의<br>카드뉴스 <span>자동화</span> 파이프라인</h1>
+  <p>AI 에이전트 팀이 리서치부터 카드뉴스 제작, PNG 추출까지<br>전 과정을 자동으로 처리합니다</p>
+</div>
+
+<div class="container">
+
+<!-- ══════════ Architecture ══════════ -->
+<h2 class="section-title">시스템 구조</h2>
+<p class="section-sub">오케스트레이터 1명 + 전문 서브에이전트 팀</p>
+
+<div class="arch-grid">
+  <!-- Card 1: Orchestrator -->
+  <div class="arch-card">
+    <div class="arch-icon">🎬</div>
+    <h3>디렉터 (오케스트레이터)</h3>
+    <p>전체 워크플로우를 관리하는 메인 에이전트. 직접 콘텐츠를 만들지 않고, 서브에이전트에 위임하며 JJ의 컨펌을 조율한다.</p>
+    <div style="margin-top: 12px;">
+      <span class="arch-tag tag-purple">워크플로우 라우팅</span>
+      <span class="arch-tag tag-purple">컨펌 관리</span>
+      <span class="arch-tag tag-purple">QA 검수</span>
+    </div>
+  </div>
+  <!-- Card 2: Official Sub-agents -->
+  <div class="arch-card">
+    <div class="arch-icon">🤖</div>
+    <h3>공식 서브에이전트 (3개)</h3>
+    <p>전용 에이전트 파일에 역할·규칙·메모리가 내장된 전문가. 작업 지시만으로 독립 수행한다.</p>
+    <div style="margin-top: 12px;">
+      <span class="arch-tag tag-amber">ct-researcher</span>
+      <span class="arch-tag tag-amber">ct-cardnews-maker</span>
+      <span class="arch-tag tag-amber">ct-theme-designer</span>
+    </div>
+  </div>
+  <!-- Card 3: Executor Skills -->
+  <div class="arch-card">
+    <div class="arch-icon">⚡</div>
+    <h3>Executor 스킬 (9개)</h3>
+    <p>역할별 지시서(SKILL.md)를 받아 실행하는 범용 에이전트. 스킬 파일이 곧 프롬프트.</p>
+    <div style="margin-top: 12px;">
+      <span class="arch-tag tag-green">brief-writer</span>
+      <span class="arch-tag tag-green">column-writer</span>
+      <span class="arch-tag tag-green">text-formatter</span>
+      <span class="arch-tag tag-green">caption-writer</span>
+      <span class="arch-tag tag-green">longform / thread</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ Legend ══════════ -->
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot ld-agent"></div> 에이전트 작업</div>
+  <div class="legend-item"><div class="legend-dot ld-confirm"></div> JJ 컨펌 (사람 개입)</div>
+  <div class="legend-item"><div class="legend-dot ld-auto"></div> 자동 실행 (컨펌 불필요)</div>
+  <div class="legend-item"><div class="legend-dot ld-output"></div> 산출물</div>
+</div>
+
+<!-- ══════════ Tab Navigation ══════════ -->
+<h2 class="section-title">제작 파이프라인</h2>
+<p class="section-sub">시리즈별 탭을 눌러 워크플로우를 확인하세요</p>
+
+<div class="tabs">
+  <button class="tab-btn active" data-tab="tab-a" style="--tab-color:#6366f1; --tab-bg:rgba(99,102,241,0.06);" onclick="switchTab('tab-a', this)">
+    <div class="tab-num">A</div>
+    <div class="tab-info">
+      <h3>코딩하는 마케터</h3>
+      <div class="tab-desc">칼럼 기반 · 컨펌 3회 · 에이전트 5~7개</div>
+    </div>
+  </button>
+  <button class="tab-btn" data-tab="tab-b" style="--tab-color:#10b981; --tab-bg:rgba(16,185,129,0.06);" onclick="switchTab('tab-b', this)">
+    <div class="tab-num">B</div>
+    <div class="tab-info">
+      <h3>알쓸IT잡</h3>
+      <div class="tab-desc">슬라이드 네이티브 · 컨펌 1회 · 에이전트 2~3개</div>
+    </div>
+  </button>
+  <button class="tab-btn" data-tab="tab-c" style="--tab-color:#f59e0b; --tab-bg:rgba(245,158,11,0.06);" onclick="switchTab('tab-c', this)">
+    <div class="tab-num">C</div>
+    <div class="tab-info">
+      <h3>커리어 레터</h3>
+      <div class="tab-desc">원문 보존 · 컨펌 1회 · 에이전트 2~3개</div>
+    </div>
+  </button>
+</div>
+
+<!-- ══════════ Tab A: 코딩하는 마케터 ══════════ -->
+<div id="tab-a" class="tab-panel active">
+  <div class="pipeline-section">
+    <div class="pipeline-header">
+      <div class="pipeline-num" style="background: linear-gradient(135deg, #6366f1, #818cf8);">A</div>
+      <div>
+        <h2>코딩하는 마케터</h2>
+        <div class="desc">칼럼 기반 — 가장 풍부한 파이프라인. 리서치 → 칼럼 → 카드뉴스/롱폼/스레드</div>
+      </div>
+    </div>
+
+    <div class="flow">
+      <div class="step">
+        <div class="step-dot dot-amber">JJ</div>
+        <div class="step-card">
+          <div class="step-title">주제/키워드 입력</div>
+          <div class="step-desc">JJ가 다루고 싶은 AI/테크 주제를 자유 입력</div>
+          <span class="step-agent agent-human">👤 JJ 입력</span>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-dot dot-indigo">1</div>
+        <div class="step-card">
+          <div class="step-title">리서치</div>
+          <div class="step-desc">웹 검색으로 팩트·트렌드·사례를 수집하여 research.md 생성</div>
+          <span class="step-agent">🤖 ct-researcher</span>
+          <span class="step-output">📄 research.md</span>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-dot dot-indigo">2</div>
+        <div class="step-card">
+          <div class="step-title">방향성 + 제목 3안 제시</div>
+          <div class="step-desc">리서치 기반으로 콘텐츠 방향과 후킹 제목 3개를 생성</div>
+          <span class="step-agent">⚡ brief-writer</span>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-dot dot-confirm">✓</div>
+        <div class="step-card confirm-card">
+          <div class="step-title" style="color:#fbbf24;">컨펌 1 — 방향성 + 제목 확정</div>
+          <div class="step-desc">JJ가 방향과 제목을 선택/수정하여 확정</div>
+          <span class="step-agent agent-human">👤 JJ 승인</span>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-dot dot-indigo">3</div>
+        <div class="step-card">
+          <div class="step-title">칼럼 작성</div>
+          <div class="step-desc">확정된 방향으로 본문 칼럼(에세이) 작성</div>
+          <span class="step-agent">⚡ column-writer</span>
+          <span class="step-output">📄 column.md</span>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-dot dot-confirm">✓</div>
+        <div class="step-card confirm-card">
+          <div class="step-title" style="color:#fbbf24;">컨펌 2 — 칼럼 확정 + 산출물 선택</div>
+          <div class="step-desc">칼럼 전문을 검토하고, 카드뉴스 / 롱폼 / 스레드 중 원하는 포맷 선택 (복수 가능)</div>
+          <span class="step-agent agent-human">👤 JJ 승인 + 선택</span>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-dot dot-indigo">4</div>
+        <div class="step-card">
+          <div class="step-title">산출물 제작 (병렬 가능)</div>
+          <div class="step-desc">선택한 포맷별로 서브에이전트가 동시 작업</div>
+          <div class="branch-box">
+            <div class="branch-label">선택한 포맷별 분기</div>
+            <div class="branch-item">
+              <div class="branch-emoji">📊</div>
+              <div class="branch-text"><strong>카드뉴스</strong> — text-formatter → ct-cardnews-maker → HTML 슬라이드</div>
+            </div>
+            <div class="branch-item">
+              <div class="branch-emoji">📝</div>
+              <div class="branch-text"><strong>롱폼</strong> — longform-writer → longform.md</div>
+            </div>
+            <div class="branch-item">
+              <div class="branch-emoji">🧵</div>
+              <div class="branch-text"><strong>스레드</strong> — thread-writer → thread.md</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-dot dot-auto">QA</div>
+        <div class="step-card auto-card">
+          <div class="step-title">QA 검수 (자동)</div>
+          <div class="step-desc">자동 검증(validate_slide.py) + 수동 검증(팩트 대조·레이아웃). 고/중 결함 발견 시 수정 후 재검증</div>
+          <span class="step-agent agent-auto">🔍 자동 실행</span>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-dot dot-confirm">✓</div>
+        <div class="step-card confirm-card">
+          <div class="step-title" style="color:#fbbf24;">컨펌 3 — 최종 결과물 검토</div>
+          <div class="step-desc">preview.html로 전체 슬라이드를 한눈에 확인. 승인 또는 수정 요청</div>
+          <span class="step-agent agent-human">👤 JJ 승인</span>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-dot dot-auto">📦</div>
+        <div class="step-card auto-card">
+          <div class="step-title">파일 추출 (자동)</div>
+          <div class="step-desc">HTML → PNG 변환 (Playwright) + 캡션 생성</div>
+          <span class="step-agent agent-auto">⚙️ html_to_png.sh</span>
+          <span class="step-agent">⚡ caption-writer</span>
+          <span class="step-output">🖼️ slide-*.png</span>
+          <span class="step-output">📄 caption.txt</span>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-dot dot-green">✦</div>
+        <div class="step-card">
+          <div class="step-title">마무리</div>
+          <div class="step-desc">노션 저장 (선택) → JJ 회고 수집 → feedback.md 업데이트</div>
+          <span class="step-agent agent-auto">💾 save-to-notion</span>
+          <span class="step-output">📄 feedback.md</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ Tab B: 알쓸IT잡 ══════════ -->
+<div id="tab-b" class="tab-panel">
+  <div class="pipeline-section">
+    <div class="pipeline-header">
+      <div class="pipeline-num" style="background: linear-gradient(135deg, #10b981, #34d399);">B</div>
+      <div>
+        <h2>알쓸IT잡 (IT단어장)</h2>
+        <div class="desc">슬라이드 네이티브 — 칼럼 없이 리서치에서 곧바로 카드뉴스. maker가 자율 제작</div>
+      </div>
+    </div>
+
+    <div class="flow">
+      <div class="step">
+        <div class="step-dot dot-amber">JJ</div>
+        <div class="step-card">
+          <div class="step-title">IT 용어/키워드 입력</div>
+          <div class="step-desc">예: "API", "SaaS", "MCP", "에이전트"</div>
+          <span class="step-agent agent-human">👤 JJ 입력</span>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-dot dot-indigo">1</div>
+        <div class="step-card">
+          <div class="step-title">리서치</div>
+          <div class="step-desc">용어 정의, 실생활 비유, 활용 사례, 마케터 관점 수집</div>
+          <span class="step-agent">🤖 ct-researcher</span>
+          <span class="step-output">📄 research.md</span>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-dot dot-indigo">2</div>
+        <div class="step-card">
+          <div class="step-title">카드뉴스 제작 (바로 진행)</div>
+          <div class="step-desc">maker가 슬라이드 구조·비주얼·텍스트를 자율 결정. 비주얼 그래픽 중심</div>
+          <span class="step-agent">🤖 ct-cardnews-maker</span>
+          <span class="step-output">📊 slide-*.html</span>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-dot dot-auto">QA</div>
+        <div class="step-card auto-card">
+          <div class="step-title">QA 검수 (자동)</div>
+          <div class="step-desc">자동 + 수동 검증. 고/중 결함 시 수정 반복</div>
+          <span class="step-agent agent-auto">🔍 자동 실행</span>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-dot dot-confirm">✓</div>
+        <div class="step-card confirm-card">
+          <div class="step-title" style="color:#fbbf24;">컨펌 — 유일한 확인 포인트</div>
+          <div class="step-desc">preview.html로 결과물 제시 → 승인 또는 수정</div>
+          <span class="step-agent agent-human">👤 JJ 승인</span>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-dot dot-auto">📦</div>
+        <div class="step-card auto-card">
+          <div class="step-title">파일 추출 (자동)</div>
+          <div class="step-desc">PNG 추출 + 표지 MP4 녹화 (커서 깜빡임 애니메이션) + 캡션 생성</div>
+          <span class="step-agent agent-auto">⚙️ Playwright</span>
+          <span class="step-output">🖼️ PNG + 🎬 MP4</span>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-dot dot-green">✦</div>
+        <div class="step-card">
+          <div class="step-title">마무리</div>
+          <div class="step-desc">노션 저장 (선택) → 회고 → feedback.md</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ Tab C: 커리어 레터 ══════════ -->
+<div id="tab-c" class="tab-panel">
+  <div class="pipeline-section">
+    <div class="pipeline-header">
+      <div class="pipeline-num" style="background: linear-gradient(135deg, #f59e0b, #fbbf24);">C</div>
+      <div>
+        <h2>커리어 레터</h2>
+        <div class="desc">원문 보존 — JJ가 쓴 글을 그대로 시네마틱 카드뉴스로 변환. 리서치 없음</div>
+      </div>
+    </div>
+
+    <div class="flow">
+      <div class="step">
+        <div class="step-dot dot-amber">JJ</div>
+        <div class="step-card">
+          <div class="step-title">원문 텍스트 입력</div>
+          <div class="step-desc">JJ가 직접 쓴 글 전문을 전달</div>
+          <span class="step-agent agent-human">👤 JJ 입력</span>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-dot dot-indigo">1</div>
+        <div class="step-card">
+          <div class="step-title">텍스트 포맷팅</div>
+          <div class="step-desc">원문 보존하며 슬라이드용 줄바꿈·강조 처리</div>
+          <span class="step-agent">⚡ text-formatter</span>
+          <span class="step-output">📄 formatted-column.md</span>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-dot dot-indigo">2</div>
+        <div class="step-card">
+          <div class="step-title">카드뉴스 제작</div>
+          <div class="step-desc">원문 보존 모드로 시네마틱 슬라이드 생성</div>
+          <span class="step-agent">🤖 ct-cardnews-maker</span>
+          <span class="step-output">📊 slide-*.html</span>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-dot dot-confirm">✓</div>
+        <div class="step-card confirm-card">
+          <div class="step-title" style="color:#fbbf24;">컨펌 — 결과물 검토</div>
+          <div class="step-desc">승인 또는 수정 요청 (수정 반복)</div>
+          <span class="step-agent agent-human">👤 JJ 승인</span>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-dot dot-green">✦</div>
+        <div class="step-card">
+          <div class="step-title">마무리</div>
+          <div class="step-desc">노션 저장 + 회고 → feedback.md</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ Comparison ══════════ -->
+<h2 class="section-title">파이프라인 비교</h2>
+<p class="section-sub">시리즈별로 복잡도와 자동화 수준이 다르다</p>
+
+<table class="compare-table">
+  <thead>
+    <tr>
+      <th>구분</th>
+      <th>A. 코딩하는 마케터</th>
+      <th>B. 알쓸IT잡</th>
+      <th>C. 커리어 레터</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>입력</td>
+      <td>키워드/주제</td>
+      <td>IT 용어</td>
+      <td>원문 글</td>
+    </tr>
+    <tr>
+      <td>리서치</td>
+      <td class="cell-check">✓</td>
+      <td class="cell-check">✓</td>
+      <td class="cell-dash">—</td>
+    </tr>
+    <tr>
+      <td>칼럼 작성</td>
+      <td class="cell-check">✓</td>
+      <td class="cell-dash">—</td>
+      <td class="cell-dash">—</td>
+    </tr>
+    <tr>
+      <td>JJ 컨펌 횟수</td>
+      <td>3회</td>
+      <td>1회</td>
+      <td>1회</td>
+    </tr>
+    <tr>
+      <td>산출물</td>
+      <td>카드뉴스 + 롱폼 + 스레드</td>
+      <td>카드뉴스 (비주얼)</td>
+      <td>카드뉴스 (시네마틱)</td>
+    </tr>
+    <tr>
+      <td>표지 형식</td>
+      <td>정적 PNG</td>
+      <td>애니메이션 MP4</td>
+      <td>정적 PNG</td>
+    </tr>
+    <tr>
+      <td>참여 에이전트</td>
+      <td>5~7개</td>
+      <td>2~3개</td>
+      <td>2~3개</td>
+    </tr>
+    <tr>
+      <td>콘텐츠 유형</td>
+      <td>칼럼 기반</td>
+      <td>슬라이드 네이티브</td>
+      <td>원문 보존</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ══════════ Key Insight ══════════ -->
+<h2 class="section-title">핵심 설계 원칙</h2>
+<p class="section-sub">왜 이렇게 만들었는가</p>
+
+<div class="arch-grid">
+  <div class="arch-card">
+    <div class="arch-icon">🔗</div>
+    <h3>Human-in-the-Loop</h3>
+    <p>AI가 단독으로 완성하지 않는다. 핵심 분기점마다 JJ가 직접 방향을 결정하고 승인한다. 자동화와 통제의 균형.</p>
+  </div>
+  <div class="arch-card">
+    <div class="arch-icon">🧩</div>
+    <h3>역할 분리 + 조합</h3>
+    <p>12개 스킬을 레고처럼 조합한다. 시리즈마다 필요한 스킬만 골라 파이프라인을 구성. 새 시리즈도 기존 스킬 재활용으로 즉시 런칭.</p>
+  </div>
+  <div class="arch-card">
+    <div class="arch-icon">📚</div>
+    <h3>누적 학습 (feedback.md)</h3>
+    <p>매 제작마다 JJ 피드백을 수집하여 feedback.md에 누적. 모든 에이전트가 이를 참조해 점점 JJ 취향에 가까워진다.</p>
+  </div>
+</div>
+
+<!-- ══════════ Footer ══════════ -->
+<div class="footer-note">
+  Built with Claude Code — AI-native content automation pipeline<br>
+  <span style="color:#555;">@imjieun.mkt</span>
+</div>
+
+</div>
+
+<script>
+function switchTab(tabId, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>

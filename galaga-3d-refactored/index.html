@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Galaga Game - Refactored</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Game Canvas -->
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- UI Panel -->
+    <div id="ui">
+        <div>Score: <span id="score">0</span></div>
+        <div>Health: <span id="health">100</span></div>
+        <div>Wave: <span id="wave">1</span></div>
+    </div>
+
+    <!-- Start Screen -->
+    <div id="startScreen">
+        <h1>🚀 GALAGA 3D 🚀</h1>
+        <button class="btn" onclick="startGame()">START GAME</button>
+        <div id="instructions">
+            <p>⌨️ WASD or Arrow Keys: Move</p>
+            <p>🖱️ Mouse: Aim</p>
+            <p>SPACE or Click: Shoot</p>
+        </div>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div id="gameOver">
+        <h1>GAME OVER</h1>
+        <div style="font-size: 24px; margin-top: 20px;">
+            Final Score: <span id="finalScore">0</span>
+        </div>
+        <button class="btn" onclick="restartGame()">PLAY AGAIN</button>
+    </div>
+
+    <!-- Three.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- Game Scripts (ES6 Modules) -->
+    <script type="module">
+        import { Game } from './js/Game.js';
+
+        // Initialize game when page loads
+        window.addEventListener('DOMContentLoaded', () => {
+            // Create game instance
+            const game = new Game();
+
+            // Game is ready - waiting for user to click start
+            console.log('🎮 Game initialized. Click START to play!');
+        });
+    </script>
+</body>
+</html>

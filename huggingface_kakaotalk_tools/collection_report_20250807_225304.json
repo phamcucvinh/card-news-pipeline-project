@@ -1,0 +1,37 @@
+{
+  "collection_date": "2025-08-07T22:53:04.017943",
+  "statistics": {
+    "models_searched": 100,
+    "models_found": 100,
+    "models_downloaded": 10,
+    "tools_downloaded": 1,
+    "total_size_mb": 122.26919269561768,
+    "errors": 0
+  },
+  "output_directory": "/mnt/c/Users/SAMSUNG/Desktop/저작권/huggingface_kakaotalk_tools",
+  "search_keywords": [
+    "kakaotalk",
+    "kakao",
+    "korean chat",
+    "korean messaging",
+    "korean nlp",
+    "korean chatbot",
+    "korean sentiment",
+    "kko",
+    "카카오톡",
+    "카톡",
+    "문자발송",
+    "메신저",
+    "korean text generation",
+    "korean conversation"
+  ],
+  "categories": [
+    "models",
+    "datasets",
+    "spaces",
+    "chatbots",
+    "nlp_tools",
+    "text_generation",
+    "messaging_tools"
+  ]
+}
