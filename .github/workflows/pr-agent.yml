@@ -1,0 +1,42 @@
+name: PR-Agent 자동 코드 리뷰
+
+on:
+  pull_request:
+    types: [opened, reopened, ready_for_review]
+  issue_comment:
+    types: [created, edited]
+
+permissions:
+  issues: write
+  pull-requests: write
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pr_agent:
+    name: PR Agent
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: >
+      (github.event_name == 'pull_request') ||
+      (github.event_name == 'issue_comment' &&
+       github.event.issue.pull_request != null &&
+       startsWith(github.event.comment.body, '/'))
+    steps:
+      - name: PR-Agent 실행
+        uses: Codium-ai/pr-agent@main
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          github_action_config.auto_review: "true"
+          github_action_config.auto_describe: "true"
+          github_action_config.auto_improve: "false"
+          config.model: "claude-3-5-sonnet-20241022"
+          config.response_language: "korean"
+          pr_reviewer.require_score_review: "true"
+          pr_reviewer.require_tests_review: "true"
+          pr_reviewer.require_security_review: "true"
+          pr_reviewer.num_code_suggestions: "3"
