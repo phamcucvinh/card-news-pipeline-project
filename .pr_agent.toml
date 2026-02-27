@@ -1,0 +1,15 @@
+[config]
+model = "anthropic/claude-3-5-sonnet-20241022"
+fallback_models = ["anthropic/claude-3-haiku-20240307"]
+response_language = "korean"
+
+[pr_reviewer]
+require_score_review = true
+require_tests_review = true
+require_security_review = true
+num_code_suggestions = 3
+
+[github_action_config]
+auto_review = true
+auto_describe = true
+auto_improve = false
